@@ -142,12 +142,6 @@ def rotacion():
         m[i][1] = round(x * sin + y * cos, 3)
     print("Resultado: ")
     imprimir_matriz(m)
-    n = int(input("Numero de puntos: "))
-    m = llenar_matriz(n)
-    print("Vector de desplazamiento: ")
-    d = []
-    d.append(int(input("dx: ")))
-    d.append(int(input("dy: ")))
 
 
 def hom_traslacion():
@@ -162,14 +156,9 @@ def hom_traslacion():
     print("tmatrix")
     print(t)
     for i in range(n):
-        print(f"{i + 1}----------------------------------")
         p = np.array([[m[i][0]], [m[i][1]], [1]])
         p1 = np.matmul(t, p)
-        print(t)
-        print("x")
-        print(p)
-        print("=")
-        print(p1)
+        imprimir_producto_matrices(p1, t, p, i)
 
 
 def hom_escalamento():
@@ -184,14 +173,9 @@ def hom_escalamento():
     print("tmatrix")
     print(s)
     for i in range(n):
-        print(f"{i + 1}----------------------------------")
         p = np.array([[m[i][0]], [m[i][1]], [1]])
         p1 = np.matmul(s, p)
-        print(s)
-        print("x")
-        print(p)
-        print("=")
-        print(p1)
+        imprimir_producto_matrices(p1, s, p, i)
 
 
 def hom_rotacion():
@@ -203,18 +187,13 @@ def hom_rotacion():
     cos = round(math.cos(o), 3)
     sin = round(math.sin(o), 3)
     print(f"cos={cos},sin={sin}")
-    s = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
+    r = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
     print("tmatrix")
-    print(s)
+    print(r)
     for i in range(n):
-        print(f"{i + 1}----------------------------------")
         p = np.array([[m[i][0]], [m[i][1]], [1]])
-        p1 = np.matmul(s, p)
-        print(s)
-        print("x")
-        print(p)
-        print("=")
-        print(p1)
+        p1 = np.matmul(r, p)
+        imprimir_producto_matrices(p1, r, p, i)
 
 
 def homogeneizacion():
@@ -244,27 +223,93 @@ def homogeneizacion():
         print(f"cos={cos},sin={sin}")
         mop = np.array([[cos, -sin, 0], [sin, cos, 0], [0, 0, 1]])
     for i in range(n):
-        print(f"{i + 1}----------------------------------")
         p = np.array([[m[i][0]], [m[i][1]], [1]])
         p1 = np.matmul(mop, p)
-        print(mop)
-        print("x")
-        print(p)
-        print("=")
-        print(p1)
+        imprimir_producto_matrices(p1, mop, p, i)
 
 
-def llenar_matriz(n):
+def transformaciones3d():
+    n = int(input("Numero de puntos: "))
+    m = llenar_matriz(n, 3)
+    op = int(input("1. Traslacion\n2. Escalamiento\n3. Rotacion\nDigite la opcion: "))
+    if (op == 1):
+        print("Vector de desplazamiento: ")
+        d = []
+        d.append(int(input("dx: ")))
+        d.append(int(input("dy: ")))
+        d.append(int(input("dz: ")))
+        print(f"(dx,dy)=({d[0]},{d[1]},{d[2]})")
+        mop = np.array([[1, 0, 0, d[0]],
+                        [0, 1, 0, d[1]],
+                        [0, 1, 1, d[2]],
+                        [0, 0, 0, 1]])
+    elif (op == 2):
+        print("Factor de escalamiento: ")
+        e = []
+        e.append(int(input("ex: ")))
+        e.append(int(input("ey: ")))
+        e.append(int(input("ez: ")))
+        print(f"(ex,ey)=({e[0]},{e[1]},{e[2]})")
+        mop = np.array([[e[0], 0, 0, 0],
+                        [0, e[1], 0, 0],
+                        [0, 0, e[2], 0]
+                        [0, 0, 0, 1]])
+    else:
+        o = int(input("Angulo: "))
+        o = math.radians(o)
+        print(f"theta:{o}")
+        cos = round(math.cos(o), 3)
+        sin = round(math.sin(o), 3)
+        print(f"cos={cos},sin={sin}")
+        axis = int(input("Digite el eje\n1. x\n2. y\n3. z:"))
+        if (axis == 1):
+            mop = np.array([[1, 0, 0, 0],
+                            [0, cos, -sin, 0],
+                            [0, sin, cos, 0]
+                            [0, 0, 0, 1]])
+        elif (axis == 2):
+            mop = np.array([[cos, 0, sin, 0],
+                            [0, 1, 0, 0],
+                            [-sin, 0, cos, 0]
+                            [0, 0, 0, 1]])
+        else:
+            mop = np.array([[cos, -sin, 0, 0],
+                            [sin, cos, 0, 0],
+                            [0, 0, 1, 0]
+                            [0, 0, 0, 1]])
+    for i in range(n):
+        p = np.array([[m[i][0]], [m[i][1]], [m[i][2]], [1]])
+        p1 = np.matmul(mop, p)
+        imprimir_producto_matrices(p1, mop, p, i)
+
+
+def llenar_matriz(n, dim=2):
     m = []
     for i in range(n):
         m.append([0] * n)
     for i in range(n):
         m[i][0] = int(input(f"x{i + 1}: "))
         m[i][1] = int(input(f"y{i + 1}: "))
-    for i in range(n):
-        print(f"(x{i + 1},y{i + 1})=({m[i][0]},{m[i][1]})", end="\t")
+        if dim == 3:
+            m[i][1] = int(input(f"z{i + 1}: "))
+    if dim == 2:
+        for i in range(n):
+            print(f"(x{i + 1},y{i + 1})=({m[i][0]},{m[i][1]})", end="")
+    elif (dim == 3):
+        for i in range(n):
+            print(f"(x{i + 1},y{i + 1},z{i + 1})=({m[i][0]},{m[i][1]},{m[i][2]})", end="")
     print("")
     return m
+
+
+def imprimir_producto_matrices(p1, mop, p, i=-1):
+    if i != -1:
+        print(f"{i + 1}:({p[0][0]},{p[1][0]})->({p1[0][0]},{p1[1][0]})-----------------")
+    print(mop)
+    print("x")
+    print(p)
+    print("=")
+    print(p1)
 
 
 def imprimir_matriz(m):
@@ -282,9 +327,9 @@ if __name__ == '__main__':
     # circunferencia_punto_medio(8)
     # traslacion()
     # escalamiento()
-    # rotacion()
-    # hom_traslacion()
-    # hom_escalamento()
-    # hom_rotacion()
-    homogeneizacion()
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    rotacion()
+# hom_traslacion()
+# hom_escalamento()
+# hom_rotacion()
+# homogeneizacion()
+# transformaciones3d()
