@@ -6,17 +6,19 @@ def simetria_punto_recta():
     print("Digite el punto: (x,y)")
     p = float(input("x="))
     q = float(input("y="))
-    m = -a / b
-    print(f"m: {m}")
-    m = -1 / m
-    print(f"m'={m}")
-    x = -1 * (-b * m * p + b * q + c) / (a + b * m)
-    y = (-c - a * x) / b
-    print(f"Punto P({p},{q})")
-    print(f"Punto de corte M({x},{y})")
-    r = 2 * x - p
-    s = 2 * y - q
-    print(f"Punto P'({r},{s})")
+    if (a == 0):
+        r = p
+        s = q + 2 * (-c - q)
+    else:
+        m = b / a
+        print(f"m'={m}")
+        x = -1 * (-b * m * p + b * q + c) / (a + b * m)
+        y = (-c - a * x) / b
+        r = 2 * x - p
+        s = 2 * y - q
+        print(f"Punto P({p},{q})")
+        print(f"Punto de corte M({x},{y})")
 
+    print(f"Punto P'({r},{s})")
 
 simetria_punto_recta()
